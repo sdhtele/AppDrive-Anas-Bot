@@ -1,15 +1,22 @@
-from threading import Thread
-from telegram import InlineKeyboardMarkup
-from telegram.ext import CommandHandler, CallbackQueryHandler
+from threading import Thread  # Importing threading module to run functions in parallel
+from telegram import InlineKeyboardMarkup  # Importing InlineKeyboardMarkup for creating interactive buttons
+from telegram.ext import CommandHandler, CallbackQueryHandler  # Importing CommandHandler and CallbackQueryHandler for handling commands and calling queries
 
-from bot import LOGGER, dispatcher
-from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, sendMarkup
-from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper import button_build
+from bot import LOGGER, dispatcher  # Importing LOGGER and dispatcher from bot.py
+from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper  # Importing GoogleDriveHelper for interacting with Google Drive
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, sendMarkup  # Importing utility functions for sending, editing, and formatting messages
+from bot.helper.telegram_helper.filters import CustomFilters  # Importing custom filters
+from bot.helper.telegram_helper.bot_commands import BotCommands  # Importing bot commands
+from bot.helper.telegram_helper import button_build  # Importing ButtonMaker for creating buttons
 
 def list_buttons(update, context):
+    """
+    Handles the /list command and displays a list of options to choose from.
+
+    Args:
+        update (telegram.Update): Incoming update from Telegram.
+        context (telegram.ext.Context): Context object for storing data.
+    """
     user_id = update.message.from_user.id
     try:
         key = update.message.text.split(" ", maxsplit=1)[1]
@@ -23,6 +30,13 @@ def list_buttons(update, context):
     sendMarkup('Choose option to list.', context.bot, update, button)
 
 def select_type(update, context):
+    """
+    Handles the user's selection of a list type and displays the corresponding options.
+
+    Args:
+        update (telegram.Update): Incoming update from Telegram.
+        context (telegram.ext.Context): Context object for storing data.
+    """
     query = update.callback_query
     user_id = query.from_user.id
     msg = query.message
@@ -51,6 +65,15 @@ def select_type(update, context):
         editMessage("list has been canceled!", msg)
 
 def _list_drive(key, bmsg, list_method, item_type):
+    """
+    List files or folders from Google Drive based on the user's selection.
+
+    Args:
+        key (str): Search key for listing files or folders.
+        bmsg (telegram.Message): The message object to edit with the list.
+        list_method (str): The method to use for listing (recursive or not).
+        item_type (str): The type of items to list (files, folders, or both).
+    """
     LOGGER.info(f"listing: {key}")
     list_method = list_method == "recu"
     gdrive = GoogleDriveHelper()
@@ -58,9 +81,4 @@ def _list_drive(key, bmsg, list_method, item_type):
     if button:
         editMessage(msg, bmsg, button)
     else:
-        editMessage(f'No result found for <i>{key}</i>', bmsg)
-
-list_handler = CommandHandler(BotCommands.ListCommand, list_buttons, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
-list_type_handler = CallbackQueryHandler(select_type, pattern="types", run_async=True)
-dispatcher.add_handler(list_handler)
-dispatcher.add_handler(list_type_handler)
+        editMessage(f'No result found for <i>{key}</i>', bmsg
