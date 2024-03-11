@@ -4,11 +4,22 @@ from psycopg2 import connect, DatabaseError
 from bot import DB_URI, AUTHORIZED_CHATS, SUDO_USERS, AS_DOC_USERS, AS_MEDIA_USERS, rss_dict, LOGGER
 
 class DbManger:
+    """
+    Database Manager class to handle all database-related operations.
+    """
+
     def __init__(self):
+        """
+        Initialize the DbManger class with an error flag set to False.
+        """
         self.err = False
         self.connect()
 
     def connect(self):
+        """
+        Connect to the database and set up a connection and cursor.
+        Log any database errors and set the error flag to True if an error occurs.
+        """
         try:
             self.conn = connect(DB_URI)
             self.cur = self.conn.cursor()
@@ -17,10 +28,19 @@ class DbManger:
             self.err = True
 
     def disconnect(self):
+        """
+        Close the cursor and connection to the database.
+        """
         self.cur.close()
         self.conn.close()
 
     def db_init(self):
+        """
+        Initialize the database by creating users and rss tables if they don't already exist.
+        Commit any changes and log a message indicating the database has been initiated.
+        Import user and rss data from the database and log messages indicating the data has been imported.
+        Disconnect from the database.
+        """
         if self.err:
             return
         sql = """CREATE TABLE IF NOT EXISTS users (
@@ -84,6 +104,11 @@ class DbManger:
         self.disconnect()
 
     def user_auth(self, chat_id: int):
+        """
+        Authorize a user by updating the auth field in the users table to True or inserting a new user with auth set to True.
+        Commit any changes and disconnect from the database.
+        Return a success message.
+        """
         if self.err:
             return "Error in DB connection, check log for details"
         elif not self.user_check(chat_id):
@@ -96,6 +121,11 @@ class DbManger:
         return 'Authorized successfully'
 
     def user_unauth(self, chat_id: int):
+        """
+        Unauthorize a user by updating the auth field in the users table to False if the user exists.
+        Commit any changes and disconnect from the database.
+        Return a success message.
+        """
         if self.err:
             return "Error in DB connection, check log for details"
         elif self.user_check(chat_id):
@@ -106,106 +136,11 @@ class DbManger:
             return 'Unauthorized successfully'
 
     def user_addsudo(self, user_id: int):
+        """
+        Promote a user to sudo by updating the sudo field in the users table to True or inserting a new user with sudo set to True.
+        Commit any changes and disconnect from the database.
+        Return a success message.
+        """
         if self.err:
             return "Error in DB connection, check log for details"
-        elif not self.user_check(user_id):
-            sql = 'INSERT INTO users (uid, sudo) VALUES ({}, TRUE)'.format(user_id)
-        else:
-            sql = 'UPDATE users SET sudo = TRUE WHERE uid = {}'.format(user_id)
-        self.cur.execute(sql)
-        self.conn.commit()
-        self.disconnect()
-        return 'Successfully Promoted as Sudo'
-
-    def user_rmsudo(self, user_id: int):
-        if self.err:
-            return "Error in DB connection, check log for details"
-        elif self.user_check(user_id):
-             sql = 'UPDATE users SET sudo = FALSE WHERE uid = {}'.format(user_id)
-             self.cur.execute(sql)
-             self.conn.commit()
-             self.disconnect()
-             return 'Successfully removed from Sudo'
-
-    def user_media(self, user_id: int):
-        if self.err:
-            return
-        elif not self.user_check(user_id):
-            sql = 'INSERT INTO users (uid, media) VALUES ({}, TRUE)'.format(user_id)
-        else:
-            sql = 'UPDATE users SET media = TRUE, doc = FALSE WHERE uid = {}'.format(user_id)
-        self.cur.execute(sql)
-        self.conn.commit()
-        self.disconnect()
-
-    def user_doc(self, user_id: int):
-        if self.err:
-            return
-        elif not self.user_check(user_id):
-            sql = 'INSERT INTO users (uid, doc) VALUES ({}, TRUE)'.format(user_id)
-        else:
-            sql = 'UPDATE users SET media = FALSE, doc = TRUE WHERE uid = {}'.format(user_id)
-        self.cur.execute(sql)
-        self.conn.commit()
-        self.disconnect()
-
-    def user_save_thumb(self, user_id: int, path):
-        if self.err:
-            return
-        image = open(path, 'rb+')
-        image_bin = image.read()
-        if not self.user_check(user_id):
-            sql = 'INSERT INTO users (thumb, uid) VALUES (%s, %s)'
-        else:
-            sql = 'UPDATE users SET thumb = %s WHERE uid = %s'
-        self.cur.execute(sql, (image_bin, user_id))
-        self.conn.commit()
-        self.disconnect()
-
-    def user_rm_thumb(self, user_id: int, path):
-        if self.err:
-            return
-        elif self.user_check(user_id):
-            sql = 'UPDATE users SET thumb = NULL WHERE uid = {}'.format(user_id)
-        self.cur.execute(sql)
-        self.conn.commit()
-        self.disconnect()
-
-    def user_check(self, uid: int):
-        self.cur.execute("SELECT * FROM users WHERE uid = {}".format(uid))
-        res = self.cur.fetchone()
-        return res
-
-    def rss_add(self, name, link, last, title, filters):
-        if self.err:
-            return
-        q = (name, link, last, title, filters)
-        self.cur.execute("INSERT INTO rss (name, link, last, title, filters) VALUES (%s, %s, %s, %s, %s)", q)
-        self.conn.commit()
-        self.disconnect()
-
-    def rss_update(self, name, last, title):
-        if self.err:
-            return
-        q = (last, title, name)
-        self.cur.execute("UPDATE rss SET last = %s, title = %s WHERE name = %s", q)
-        self.conn.commit()
-        self.disconnect()
-
-    def rss_delete(self, name: str):
-        if self.err:
-            return
-        self.cur.execute("DELETE FROM rss WHERE name = %s", (name,))
-        self.conn.commit()
-        self.disconnect()
-
-    def rss_delete_all(self):
-        if self.err:
-            return
-        self.cur.execute("TRUNCATE TABLE rss")
-        self.conn.commit()
-        self.disconnect()
-
-if DB_URI is not None:
-    DbManger().db_init()
-
+        elif not
