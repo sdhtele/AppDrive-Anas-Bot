@@ -1,33 +1,53 @@
-aiohttp
-anytree
-appdirs
-aria2p
-attrdict
-beautifulsoup4
-cfscrape
-feedparser
-gc-python-utils
-google-api-python-client
-google-auth-httplib2
-google-auth-oauthlib
-gunicorn
-lk21
-lxml
-pillow
-psutil
-psycopg2-binary
-pybase64
-pyrogram
-python-dotenv
-python-magic
-python-telegram-bot
-qbittorrent-api
-requests
-speedtest-cli
-six
-telegraph
-tenacity
-TgCrypto
-torrentool==1.1.0
-urllib3
-yt-dlp
+# aiohttp is a Python library for writing asynchronous web applications
+# using the coroutine-based async/await syntax.
+import aiohttp
+
+# anytree is a Python library to handle trees and tree-like data structures.
+import anytree
+
+# appdirs is a Python library for determining appropriate directories
+# to store application data, configuration, and logs for the current OS.
+import appdirs
+
+# aria2p is a Python interface for aria2, a popular download utility.
+import aria2p
+
+# attrdict is a Python library for creating dictionaries with attribute
+# access, so you can access dictionary keys as if they were attributes.
+import attrdict
+
+# beautifulsoup4 is a Python library for parsing HTML and XML documents.
+# It provides a simple and convenient way to search, navigate, and modify
+# the structure of these documents.
+import beautifulsoup4
+
+# cfscrape is a Python library for scraping web pages using Cloudflare
+# bypassing technology.
+import cfscrape
+
+# feedparser is a Python library for parsing and working with RSS and Atom feeds.
+import feedparser
+
+# gc-python-utils is a collection of various small Python utilities.
+import gc_python_utils
+
+# google-api-python-client is a Python client library for accessing
+# Google APIs, including Google Drive, Google Sheets, and Google Calendar.
+import google_api_python_client
+
+# google-auth-httplib2 is a Python library for authentication with Google
+# using the OAuth 2.0 protocol and the httplib2 library.
+import google_auth_httplib2
+
+# google-auth-oauthlib is a Python library for handling OAuth 2.0 authentication
+# with Google using the oauthlib library.
+import google_auth_oauthlib
+
+# gunicorn is a Python WSGI HTTP Server for UNIX, built for speed and simplicity.
+import gunicorn
+
+# lk21 is a Python library for interacting with the lk21 API,
+# a popular online gambling platform.
+import lk21
+
+#
