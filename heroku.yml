@@ -1,5 +1,13 @@
+# This is a configuration file for building and running a web application using Docker.
+
+# The 'build' section specifies the Dockerfile to use for building the web application.
 build:
+  # The 'docker' section specifies the Docker configuration for the build process.
   docker:
+    # The 'web' key specifies the Dockerfile to use for building the web application.
     web: Dockerfile
+
+# The 'run' section specifies the commands to run the web application.
 run:
+  # The 'web' key specifies the command to run the web application.
   web: bash start.sh
