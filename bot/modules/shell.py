@@ -1,11 +1,11 @@
-from subprocess import run
-from telegram import ParseMode
-from telegram.ext import CommandHandler
+from subprocess import run  # Import run function from subprocess module
+from telegram import ParseMode  # Import ParseMode from telegram module
+from telegram.ext import CommandHandler  # Import CommandHandler from telegram.ext module
 
-from bot import LOGGER, dispatcher
-from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.message_utils import sendMessage
+from bot import LOGGER, dispatcher  # Import LOGGER and dispatcher from bot.py
+from bot.helper.telegram_helper.filters import CustomFilters  # Import CustomFilters from bot.helper.telegram_helper.filters
+from bot.helper.telegram_helper.bot_commands import BotCommands  # Import BotCommands from bot.helper.telegram_helper.bot_commands
+from bot.helper.telegram_helper.message_utils import sendMessage  # Import sendMessage from bot.helper.telegram_helper.message_utils
 
 
 def shell(update, context):
@@ -15,6 +15,9 @@ def shell(update, context):
         return sendMessage('No command to execute was given.', context.bot, update)
     cmd = cmd[1]
     process = run(cmd, capture_output=True, shell=True)
+    # ...
+
+
     reply = ''
     stderr = process.stderr.decode('utf-8')
     stdout = process.stdout.decode('utf-8')
@@ -25,14 +28,7 @@ def shell(update, context):
         reply += f"*Stderr*\n<code>{stderr}</code>\n"
         LOGGER.error(f"Shell - {cmd} - {stderr}")
     if len(reply) > 3000:
-        with open('shell_output.txt', 'w') as file:
-            file.write(reply)
-        with open('shell_output.txt', 'rb') as doc:
-            context.bot.send_document(
-                document=doc,
-                filename=doc.name,
-                reply_to_message_id=message.message_id,
-                chat_id=message.chat_id)
+        # ...
     elif len(reply) != 0:
         sendMessage(reply, context.bot, update)
     else:
@@ -40,5 +36,4 @@ def shell(update, context):
 
 
 SHELL_HANDLER = CommandHandler(BotCommands.ShellCommand, shell,
-                                                  filters=CustomFilters.owner_filter, run_async=True)
-dispatcher.add_handler(SHELL_HANDLER)
+                                                  filters=CustomFilters.owner_filter,
